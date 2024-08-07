@@ -5,5 +5,5 @@ from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', views.home, name='index')
+    path('', views.prebase, name='index')
 ]

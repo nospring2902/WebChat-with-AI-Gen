@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def prebase(request):
+    return render(request, 'prebase.html')
