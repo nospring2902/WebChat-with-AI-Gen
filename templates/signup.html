@@ -33,19 +33,29 @@
     <!-------------------- ------ Right Box ---------------------------->
         
        <div class="col-md-6 right-box">
+        <form onsummit = "return validateForm">
           <div class="row align-items-center">
                 <div class="header-text mb-4">
                      <h2>Sign Up</h2>
                      <p>Fill in the details below to create a new account.</p>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username">
+                    <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username" required >
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Confirm Password">
+                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Confirm Password" required>
+                </div>
+
+                <div class=" input-group mb-3">
+                    <select class = "form-select form-select-lg bg-light fs-6" id="languageSelect" required>
+                        <option value="" disable selected>Select Language</option>
+                        <option value = "en">English</option>
+                        <option value = "ja">Japanese</option>
+                        <option value = "vi">Vietnamese</option>
+                    </select>
                 </div>
                 
                 <div class="input-group mb-3">
@@ -56,6 +66,7 @@
                     <small>Already have an account? <a href="{% url 'signin' %}">Sign In</a></small>
                 </div>
           </div>
+        </form>
        </div> 
 
       </div>
