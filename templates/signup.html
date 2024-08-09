@@ -32,42 +32,57 @@
 
     <!-------------------- ------ Right Box ---------------------------->
         
-       <div class="col-md-6 right-box">
-        <form onsubmit = "return validateForm">
-          <div class="row align-items-center">
+    <div class="col-md-6 right-box">
+        {% if form.errors %}
+        <div id="error-popup" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> Please check the details and try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <form method="post" action="{% url 'signup' %}" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <div class="row align-items-center">
                 <div class="header-text mb-4">
-                     <h2>Sign Up</h2>
-                     <p>Fill in the details below to create a new account.</p>
+                    <h2>Sign Up</h2>
+                    <p>Fill in the details below to create a new account.</p>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username" required >
+                    <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username" required>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required>
+                    <input type="password" name="password1" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Confirm Password" required>
+                    <input type="password" name="password2" class="form-control form-control-lg bg-light fs-6" placeholder="Confirm Password" required>
                 </div>
-
-                <div class=" input-group mb-3">
-                    <select class = "form-select form-select-lg bg-light fs-6" id="languageSelect" required>
+    
+                <div class="input-group mb-3">
+                    <select name="main_language" class="form-select form-select-lg bg-light fs-6" id="languageSelect" required>
                         <option value="" disabled selected>Select Language</option>
-                        <option value = "en">English</option>
-                        <option value = "ja">Japanese</option>
-                        <option value = "vi">Vietnamese</option>
+                        <option value="en">English</option>
+                        <option value="ja">Japanese</option>
+                        <option value="vi">Vietnamese</option>
                     </select>
                 </div>
-                
+    
                 <div class="input-group mb-3">
-                    <button class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
+                    <button type="submit" class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
                 </div>
-                
+    
                 <div class="row">
                     <small>Already have an account? <a href="{% url 'signin' %}">Sign In</a></small>
                 </div>
-          </div>
+            </div>
         </form>
-       </div> 
+    </div>
+    
 
       </div>
     </div>
