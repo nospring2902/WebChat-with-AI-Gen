@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
+    {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,7 +56,7 @@
         <div class="header">
             <div class="left">
                 <button class="btn btn-create-group">
-                    <img src="/static/images/creategroup.png" alt="Create Group">
+                    <img src="{% static 'images/creategroup.png' %}" alt="Create Group">
                 </button>
             </div>
             <div class="title">
