@@ -39,10 +39,12 @@ def signup(request):
     else:  
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
 @login_required
 def dashboard(request):
     user_groups = Group.objects.filter(groupmember__user=request.user)
     return render(request, 'dashboard.html', {'groups': user_groups})
+
 @login_required
 def logout(request):
     return render(request, 'prebase.html')
