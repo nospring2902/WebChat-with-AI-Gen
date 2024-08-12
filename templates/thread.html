@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/static/css/chat.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="msg-header">
+      <a href="{% url 'dashboard' %}" class="back-button">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div class="active">
+       
+      </div>
+    </div>
+    <div class="chat-page">
+      <div class="msg-inbox">
+        <div class="msg-page">
+          <div class="received-chats">
+            <div class="received-msg">
+              <div class="received-msg-inbox">
+                <p>{{ message.content }}</p>
+                {% if message.timestamp %}
+                  <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="msg-bottom">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Write message..."
+              />
+
+              <span class="input-group-text send-icon">
+                <i class="bi bi-send"></i>
+              </span>
+            </div>
+        <!-- Add additional related messages or functionality here -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
