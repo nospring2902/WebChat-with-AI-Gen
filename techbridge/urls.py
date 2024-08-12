@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-
+from django.contrib.auth.views import LogoutView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -9,6 +9,8 @@ urlpatterns = [
     path('', views.prebase, name='prebase'),
 
     path('signin/', views.signin, name='signin'),
-
-    path('signup/', views.signup, name='signup')
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('signup/', views.signup, name='signup'),
+    path('logout/', LogoutView.as_view(next_page='prebase'), name='logout'),
+    path('create_groupchat/', views.create_groupchat, name='create_groupchat'),
 ]

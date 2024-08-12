@@ -38,19 +38,39 @@
                      <h2>Sign in</h2>
                      <p>We are happy to have you back.</p>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username">
-                </div>
-                <div class="input-group mb-1">
-                    <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
-                </div>
                 
-                <div class="input-group mb-3">
-                    <button class="btn btn-lg btn-primary w-100 fs-6">Sign in</button>
+                <!-- Hiển thị lỗi nếu có -->
+                {% if form.errors %}
+                <div id="error-popup" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> Please check the details and try again.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
                 </div>
+                {% endif %}
+
+                <!-- Form đăng nhập -->
+                <form method="post" action="{% url 'signin' %}">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="text" name="username" class="form-control form-control-lg bg-light fs-6" placeholder="Enter username" required>
+                    </div>
+                    <div class="input-group mb-1">
+                        <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <button type="submit" class="btn btn-lg btn-primary w-100 fs-6">Sign in</button>
+                    </div>
+                </form>
                 
                 <div class="row">
-                    <small>Don't have account? <a href="signup/">Sign Up</a></small>
+                    <small>Don't have account? <a href="{% url 'signup' %}">Sign Up</a></small>
                 </div>
           </div>
        </div> 
@@ -58,5 +78,6 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
