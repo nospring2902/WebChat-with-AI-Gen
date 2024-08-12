@@ -45,6 +45,20 @@
         .header .btn-signout {
             margin-left: 15px;
         }
+        .close-button {
+            position: absolute;
+            top: 10px;  /* 上から10px */
+            right: 10px; /* 右から10px */
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .group-card{
+            position: relative;
+            padding-right: 30px;
+        }
     </style>
     <title>TechBridge</title>
 </head>
@@ -73,6 +87,10 @@
             <div class="group-card">
                 <strong>{{ group.group_name }}</strong>
                 <p>{{ group.latest_message_id.message_content }}</p>
+                <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="close-button" onclick="return confirm('本当に削除しますか？');">×</button>
+                </form>
             </div>
         {% endfor %}
 

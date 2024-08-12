@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate,login
 from .forms import SignUpForm
 from django.contrib.auth.models import User
@@ -67,3 +67,9 @@ def create_groupchat(request):
     else:
         users = User.objects.exclude(id=request.user.id)
         return render(request, 'create_groupchat.html', {'users': users})
+    
+@login_required
+def delete_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    group.delete()
+    return redirect('dashboard')
