@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <title>Create New Group Chat</title><link rel="stylesheet" href="{% static 'css/create_groupchat.css' %}"> -->
+    <title>Tạo nhóm chat mới</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,13 +73,15 @@
 </head>
 <body>
     <div class="container">
-        <a href="{% url 'dashboard' %}" class="back-btn">Back</a>
-        <h1>Create New Group Chat</h1>
+        <a href="{% url 'dashboard' %}" class="back-btn">
+            <img src="/static/images/backtohome.png" alt="Back to home">
+        </a>
+        <h1>Create a new group chat</h1>
         <form method="post" action="{% url 'create_groupchat' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="group-name">Group name:</label>
-                <input type="text" id="group-name" name="group_name" placeholder="Enter your group chat name" required>
+                <input type="text" id="group-name" name="group_name" placeholder="Enter chat group name" required>
             </div>
             <div class="users-list">
                 {% for user in users %}
@@ -88,7 +91,7 @@
                     </div>
                 {% endfor %}
             </div>
-            <button type="submit" class="create-btn">Create</button>
+            <button type="submit" class="create-btn">Create group</button>
         </form>
     </div>
 </body>
