@@ -47,22 +47,6 @@
         .header .btn-signout {
             margin-left: 15px;
         }
-<<<<<<< HEAD
-        .close-button {
-            position: absolute;
-            top: 10px;  /* 上から10px */
-            right: 10px; /* 右から10px */
-            background-color: white;
-            color: black;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-        }
-        .group-card{
-            position: relative;
-            padding-right: 30px;
-        }
-=======
         .group-card {
             background-color: #ffffff;
             border: 1px solid #dee2e6;
@@ -71,9 +55,10 @@
             margin-bottom: 15px;
             padding: 15px;
             transition: box-shadow 0.3s ease;
-            display: block; /* Hiển thị như một khối */
-            text-decoration: none; /* Bỏ gạch dưới của liên kết */
-            color: inherit; /* Dùng màu chữ của khung */
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
         }
         .group-card:hover {
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -88,8 +73,17 @@
             color: #6c757d;
             margin: 0;
         }
+        .close-button {
+            position: absolute;
+            top: 10px; /* Adjust this value to move up/down */
+            right: 10px; /* Adjust this value to move left/right */
+            background-color: transparent;
+            color: #007bff;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
         
->>>>>>> 50b85715cb53819b2175fe33a63bac8be547c1e5
     </style>
     <title>TechBridge</title>
 </head>
@@ -115,9 +109,11 @@
         </div>
 
         {% for group in groups %}
-            <a href="{% url 'chat'  group.id %}" class="group-card">
-                <strong>{{ group.group_name }}</strong>
-                <p>{{ group.latest_message_id.message_content }}</p>
+            <div class="group-card">
+                <a href="{% url 'chat' group.id %}" style="text-decoration: none; color: inherit;">
+                    <strong>{{ group.group_name }}</strong>
+                    <p>{{ group.latest_message_id.message_content }}</p>
+                </a>
                 <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="close-button" onclick="return confirm('本当に削除しますか？');">×</button>
