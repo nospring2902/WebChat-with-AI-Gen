@@ -87,10 +87,8 @@ def chat_view(request, group_id):
     if request.method == 'POST':
         content = request.POST.get('message_content')
         if content:
-            
-
             # Tạo tin nhắn mới
-            GroupMessage.objects.create(
+            new_message = GroupMessage.objects.create(
                 sender=request.user,
                 thread=None ,
                 message_content=content,
