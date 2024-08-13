@@ -126,5 +126,3 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGOUT_REDIRECT_URL = ''
-GEMINI_API_KEY = 'AIzaSyALmv44H40qO5ULHXkIRLxriWpE2OEQpns'
-GEMINI_API_ENDPOINT = 'https://translate.googleapis.com'
