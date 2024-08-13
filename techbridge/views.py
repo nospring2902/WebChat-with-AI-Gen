@@ -86,15 +86,15 @@ def chat_view(request, group_id):
     group = get_object_or_404(Group, id=group_id)
       # Xử lý gửi tin nhắn
     if request.method == 'POST':
-        message_content = request.POST.get('message_content')
-        if message_content:
+        content = request.POST.get('message_content')
+        if content:
             
 
             # Tạo tin nhắn mới
             GroupMessage.objects.create(
                 sender=request.user,
                 thread=None ,
-                message_content=message_content,
+                message_content=content,
                 timestamp=timezone.now()
             )
             

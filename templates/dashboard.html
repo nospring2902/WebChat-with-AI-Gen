@@ -51,11 +51,11 @@
             position: absolute;
             top: 10px;  /* 上から10px */
             right: 10px; /* 右から10px */
-            background-color: white;
-            color: black;
+            background-color: transparent;
+            color: #007bff;
             border: none;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 20px;
         }
         .group-card{
             position: relative;
@@ -130,7 +130,7 @@
                     <button type="submit" class="close-button" onclick="return confirm('本当に削除しますか？');">×</button>
                 <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="close-button" onclick="return confirm('Are you sure you want to delete this group？');">X</button>
+                    <button type="submit" class="close-button" onclick="return confirm('Are you sure you want to delete this group？');">x</button>
                 </form>
             </a>
         {% endfor %}
