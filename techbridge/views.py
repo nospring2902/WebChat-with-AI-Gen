@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 from django.contrib import messages  # メッセージフレームワークをインポート
 from django.shortcuts import render, redirect, get_object_or_404
-=======
-from django.shortcuts import render, get_object_or_404, redirect
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
 from django.contrib.auth import authenticate,login
 from .forms import SignUpForm
 from django.contrib.auth.models import User
@@ -79,13 +75,6 @@ def create_groupchat(request):
         return render(request, 'create_groupchat.html', {'users': users})
     
 @login_required
-<<<<<<< HEAD
-def delete_groupchat(request, group_id):
-    group = get_object_or_404(Group, id=group_id)
-    group.delete()  # データベースからグループを削除
-    messages.success(request, 'グループが正常に削除されました。')  # メッセージを追加
-    return redirect('dashboard')  # グループリストページにリダイレクト
-=======
 def delete_group(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     group.delete()
@@ -149,4 +138,3 @@ def thread_view(request, message_id):
         'messages': messages
     })
 '''
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
