@@ -10,13 +10,16 @@ urlpatterns = [
 
     path('signin/', views.signin, name='signin'),
 
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
     path('signup/', views.signup, name='signup'),
+    
     
     path('logout/', LogoutView.as_view(next_page='prebase'), name='logout'),
     
-    path('dashboard/', views.dashboard, name='dashboard'),
-    
     path('create_groupchat/', views.create_groupchat, name='create_groupchat'),
+
+    path('delete_group<int:group_id>/', views.delete_group, name='delete_group'),
     
     path('chat/<int:group_id>/', views.chat_view, name='chat'),
 
