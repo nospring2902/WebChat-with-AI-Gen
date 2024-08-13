@@ -13,4 +13,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('logout/', LogoutView.as_view(next_page='prebase'), name='logout'),
     path('create_groupchat/', views.create_groupchat, name='create_groupchat'),
+    path('translate/', views.translate_text, name='translate_text'),
 ]

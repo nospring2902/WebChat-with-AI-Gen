@@ -6,6 +6,33 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from .models import Group, GroupMember
+from django.shortcuts import render
+from django.conf import settings
+import requests
+
+def translate_text(request):
+    translated_text = ""
+    if request.method == "POST":
+        text_to_translate = request.POST.get('text_to_translate', '')
+        
+        if text_to_translate:
+            # Gửi yêu cầu tới Google Translate API
+            url = "https://translate.googleapis.com/translate_a/single"
+            params = {
+                'client': 'gtx',
+                'sl': 'auto',  # Tự động nhận dạng ngôn ngữ
+                'tl': 'vi',    # Dịch sang tiếng Anh
+                'dt': 't',
+                'q': text_to_translate
+            }
+            
+            response = requests.get(url, params=params)
+            if response.status_code == 200:
+                translated_text = response.json()[0][0][0]
+            else:
+                translated_text = "Error translating text"
+    
+    return render(request, 'translate.html', {'translated_text': translated_text})
 
 def prebase(request):
     return render(request, 'prebase.html')
