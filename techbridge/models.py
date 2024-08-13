@@ -27,7 +27,7 @@ class GroupMember(models.Model):
 
 class GroupThread(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    first_message = models.ForeignKey('GroupMessage', on_delete=models.CASCADE, related_name='first_message_in_thread')
+    first_message = models.ForeignKey('GroupMessage', on_delete=models.CASCADE, related_name='first_message_in_thread',null=True, blank=True)
 
     def __str__(self):
         return f"Thread in {self.group.group_name}"
