@@ -23,6 +23,8 @@
             padding: 10px;
             background-color: #ffffff;
             border-bottom: 2px solid #dee2e6;
+            height: 60px;
+            position: relative
         }
         .header .left,
         .header .right {
@@ -46,6 +48,10 @@
         }
         .header .btn-signout {
             margin-left: 15px;
+        }
+        .header .logo img {
+            height: 150px;
+            width: auto;
         }
         .close-button {
             position: absolute;
@@ -87,7 +93,7 @@
             color: #6c757d;
             margin: 0;
         }
-        
+
     </style>
     <title>TechBridge</title>
 </head>
@@ -100,10 +106,10 @@
                     <img src="{% static 'images/creategroup.png' %}" alt="Create Group">
                 </a>
             </div>
-            
-            <div class="title">
-                Techbridge
+            <div class="center logo">
+                <img src="{% static 'images/logo/logo_navy.png' %}" alt="Logo">
             </div>
+            
             <div class="right">
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
