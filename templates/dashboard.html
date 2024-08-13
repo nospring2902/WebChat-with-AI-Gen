@@ -47,7 +47,6 @@
         .header .btn-signout {
             margin-left: 15px;
         }
-<<<<<<< HEAD
         .close-button {
             position: absolute;
             top: 10px;  /* 上から10px */
@@ -62,12 +61,10 @@
             position: relative;
             padding-right: 30px;
         }
-=======
         .group-card {
-<<<<<<< HEAD
+
             position: relative;
             padding-right: 30px; /* 右側に余白を確保 */
-=======
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -78,7 +75,10 @@
             display: block; /* Hiển thị như một khối */
             text-decoration: none; /* Bỏ gạch dưới của liên kết */
             color: inherit; /* Dùng màu chữ của khung */
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
         }
 
         .close-btn {
@@ -89,23 +89,12 @@
             border: none;
             color: #f00;
             font-size: 18px;
-<<<<<<< HEAD
             cursor: pointer;
-=======
-            color: #007bff;
-            margin-bottom: 8px;
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
         }
 
         .close-btn:hover {
             color: #900;
         }
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> 50b85715cb53819b2175fe33a63bac8be547c1e5
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
     </style>
     <title>TechBridge</title>
 </head>
@@ -131,26 +120,19 @@
         </div>
 
         {% for group in groups %}
+       
             <a href="{% url 'chat'  group.id %}" class="group-card">
                 <strong>{{ group.group_name }}</strong>
+
                 <p>{{ group.latest_message_id.message_content }}</p>
-<<<<<<< HEAD
-                 <!-- 削除フォーム -->
-                <form method="post" action="{% url 'delete_groupchat' group.id %}">
-                    {% csrf_token %}
-                    <button type="button" class="close-btn" onclick="this.nextElementSibling.style.display='block';this.style.display='none';">×</button>
-                    <div style="display:none;">
-                        <p>本当に削除してもよろしいですか？</p>
-                        <button type="submit" class="btn btn-danger btn-sm">はい</button>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.style.display='none';this.parentElement.previousElementSibling.style.display='inline-block';">いいえ</button>
-                    </div>
-=======
                 <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="close-button" onclick="return confirm('本当に削除しますか？');">×</button>
->>>>>>> 955991738e6aeeb14e5381214e0621536727e656
+                <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="close-button" onclick="return confirm('Are you sure you want to delete this group？');">X</button>
                 </form>
-            </div>
+            </a>
         {% endfor %}
 
     </div>
