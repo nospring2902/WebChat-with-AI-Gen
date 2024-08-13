@@ -38,7 +38,7 @@
         <a href="/templates/thread.html" class="message-button">
           <div class="outgoing-msg">
             <div class="outgoing-chats-msg">
-              <p>{{ message.content }}</p>
+              <p>{{ message.message_content }}</p>
               {% if message.timestamp %}
                 <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
               {% endif %}
@@ -52,7 +52,7 @@
         <a href="/templates/thread.html" class="message-button">
           <div class="received-msg">
             <div class="received-msg-inbox">
-              <p>{{ message.content }}</p>
+              <p>{{ message.message_content }}</p>
               {% if message.timestamp %}
                 <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
               {% endif %}
