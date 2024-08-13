@@ -9,6 +9,10 @@ from .models import Group, GroupMember, GroupMessage, GroupThread
 from django.utils import timezone
 
 
+from django.shortcuts import render
+from django.conf import settings
+import requests
+
 
 def prebase(request):
     return render(request, 'prebase.html')
@@ -81,41 +85,42 @@ def delete_group(request, group_id):
 
 @login_required
 def chat_view(request, group_id):
-    # Lấy nhóm dựa trên group_id
     group = get_object_or_404(Group, id=group_id)
-      # Xử lý gửi tin nhắn
-    if request.method == 'POST':
-        content = request.POST.get('message_content')
-        if content:
-            # Tạo tin nhắn mới
-            new_message = GroupMessage.objects.create(
-                sender=request.user,
-                thread=None ,
-                message_content=content,
-                timestamp=timezone.now()
-            )
-            
-            # Tạo hoặc lấy thread của nhóm
-            thread, created = GroupThread.objects.get_or_create(group=group)
-             # Nếu đây là tin nhắn đầu tiên trong thread, cập nhật trường first_message
-            if created:
-                thread.first_message = new_message
-                thread.save()
-              # Cập nhật thread cho tin nhắn
-            new_message.thread = thread
-            new_message.save()
 
-            # Cập nhật tin nhắn mới nhất cho nhóm
-            latest_message = GroupMessage.objects.latest('timestamp')
-            group.latest_message_id = GroupMessage.objects.latest('timestamp')
+    # Kiểm tra xem người dùng có phải là thành viên của nhóm không
+    if not GroupMember.objects.filter(group=group, user=request.user).exists():
+        return redirect('dashboard')  # Nếu không phải là thành viên thì chuyển về dashboard
+
+    threads = GroupThread.objects.filter(group=group).select_related('first_message')
+    messages = GroupMessage.objects.filter(thread__group=group).select_related('sender')
+
+    if request.method == "POST":
+        message_content = request.POST.get('message_content')
+        if message_content:
+            # Tạo thread mới trước
+            thread = GroupThread.objects.create(group=group)
+
+            # Tạo tin nhắn mới và gán nó vào thread vừa tạo
+            first_message = GroupMessage.objects.create(
+                sender=request.user,
+                message_content=message_content,
+                thread=thread  # Gán thread cho tin nhắn
+            )
+
+            # Cập nhật tin nhắn đầu tiên cho thread
+            thread.first_message = first_message
+            thread.save()
+
+            # Cập nhật tin nhắn mới nhất trong group
+            group.latest_message_id = first_message
             group.save()
-            return redirect('chat', group_id=group.id)
-    # Lấy tất cả các tin nhắn trong thread
-    messages = GroupMessage.objects.filter(thread__group=group).order_by('timestamp')
-    # Render trang chat với dữ liệu nhóm, thread và tin nhắn
+
+            return redirect('chat', group_id=group.id)  # Reload trang chat
+
     return render(request, 'chat.html', {
         'group': group,
-        'messages': messages
+        'messages': messages,
+        'user': request.user,
     })
 '''
 @login_required
