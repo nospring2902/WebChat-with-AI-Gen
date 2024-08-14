@@ -43,8 +43,9 @@
             padding: 0;
         }
         .header .btn-create-group img {
-            height: 40px;
-            width: 40px;
+            height: 100%;
+            width: 50px;
+
         }
         .header .btn-signout {
             margin-left: 15px;
@@ -63,11 +64,10 @@
             cursor: pointer;
             font-size: 20px;
         }
-        .group-card{
-            position: relative;
-            padding-right: 30px;
-        }
         .group-card {
+
+            position: relative;
+            padding-right: 30px; /* 右側に余白を確保 */
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -75,23 +75,32 @@
             margin-bottom: 15px;
             padding: 15px;
             transition: box-shadow 0.3s ease;
+            display: block; /* Hiển thị như một khối */
+            text-decoration: none; /* Bỏ gạch dưới của liên kết */
+            color: inherit; /* Dùng màu chữ của khung */
             display: block;
             text-decoration: none;
             color: inherit;
             position: relative;
         }
-        .group-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .group-card strong {
-            display: block;
-            font-size: 18px;
+
+        .group-name {
             color: #007bff;
-            margin-bottom: 8px;
         }
-        .group-card p {
-            color: #6c757d;
-            margin: 0;
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            color: #f00;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #900;
         }
 
     </style>
@@ -107,7 +116,10 @@
                 </a>
             </div>
             <div class="center logo">
-                <img src="{% static 'images/logo/logo_navy.png' %}" alt="Logo">
+                <a class="logo fixed-logo" id="logo-top" href="javascript:void(0)">
+                    <img src="{% static 'images/logo/logo_navy.png' %}" alt="logo" />
+                </a>
+                
             </div>
             
             <div class="right">
@@ -121,7 +133,7 @@
         {% for group in groups %}
        
             <a href="{% url 'chat'  group.id %}" class="group-card">
-                <strong>{{ group.group_name }}</strong>
+                <strong class = "group-name">{{ group.group_name }}</strong>
                 <form action="{% url 'delete_group' group.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="close-button" onclick="return confirm('Are you sure you want to delete this group？');">x</button>

@@ -11,7 +11,10 @@
     document.querySelector(".preloader").style.display = "none";
   }
 
+  
+
   // ======= Sticky
+  
   window.onscroll = function () {
     const header_navbar = document.querySelector(".navbar-area");
     const sticky = header_navbar.offsetTop;
@@ -19,10 +22,10 @@
 
     if (window.pageYOffset > sticky) {
       header_navbar.classList.add("sticky");
-      logo.src = "assets/images/logo/logo-2.svg";
+      logo.src = "{% static 'images/logo/logo_white.png' %}";
     } else {
       header_navbar.classList.remove("sticky");
-      logo.src = "assets/images/logo/logo.svg";
+      logo.src = "{% static 'images/logo/logo_navy.png' %}";
     }
 
     // show or hide the back-top-top button
@@ -36,6 +39,7 @@
       backToTop.style.display = "none";
     }
   };
+  
 
   // ==== for menu scroll
   const pageLink = document.querySelectorAll(".page-scroll");

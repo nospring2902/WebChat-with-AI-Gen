@@ -55,8 +55,11 @@
           <div class="row">
             <div class="col-lg-12">
               <nav class="navbar navbar-expand-lg">
-               <!-- >  <img src="/static/images/logo/logo.svg" alt="Logo" />
-                </a> -->
+                <a class="navbar-brand" href="#">
+                  <img src="{% static 'images/logo/logo_white.png' %}" alt="Logo" style="height: 40px;" />
+              </a>
+          
+               
                 <button
                   class="navbar-toggler"
                   type="button"
@@ -440,9 +443,6 @@
 
 
     <style>
-      .footer-about {
-        padding: 20px; /* Add padding around the content */
-      }
     
       .footer-about .text {
         margin: 0; /* Remove default margin */
@@ -456,6 +456,13 @@
       .footer-copyright .copyright-content {
         margin: 0; /* Remove default margin */
         padding: 0 15px; /* Add horizontal padding */
+      }
+      .logo{
+        max-width: 100%;
+        height: auto;
+      }
+      .footer-about .logo img{
+        width: 300px;
       }
     </style>
     
@@ -490,13 +497,13 @@
           <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-8">
               <div
-                class="footer-about mt-50 wow fadeIn"
+                class="footer-about wow fadeIn"
                 data-wow-duration="1s"
                 data-wow-delay="0.2s"
               >
               
                 <a class="logo" href="javascript:void(0)">
-                  <img src="{% static 'images/logo/logo_navy.png' %}" alt="logo" width = "1000" height="200" />
+                  <img src="{% static 'images/logo/logo_white.png' %}" alt="logo" />
                 </a>
               
                 <p class="text">

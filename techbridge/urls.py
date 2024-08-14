@@ -14,7 +14,6 @@ urlpatterns = [
     
     path('signup/', views.signup, name='signup'),
     
-    
     path('logout/', LogoutView.as_view(next_page='prebase'), name='logout'),
     
     path('create_groupchat/', views.create_groupchat, name='create_groupchat'),
@@ -23,6 +22,7 @@ urlpatterns = [
     
     path('chat/<int:group_id>/', views.chat_view, name='chat'),
 
-    path('thread/<int:thread_id>/', views.thread_view, name='thread'),
-    # path('thread/<int:message_id>/', views.thread_view, name='thread'), 
+    path('thread/<int:thread_id>/', views.thread_view, name='thread'), 
+    path('update_summary/<int:thread_id>/', views.update_summary, name='update_summary'),
+    # path('translate/', views.translate_text, name='translate_text'),
 ]
