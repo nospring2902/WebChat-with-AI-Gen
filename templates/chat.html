@@ -14,7 +14,6 @@
     <div class="container">
       <!-- msg-header section starts -->
     
-      
         <div class="msg-header">
           <div class="container1">
             <a href="{% url 'dashboard' %}" class="back-button">
@@ -30,39 +29,39 @@
 
       <!-- Chat inbox  -->
      <!-- Message container -->
-<div class="msg-page">
-  {% for message in messages %}
-    {% if message.sender == user.username %}
-      <!-- Outgoing messages -->
-      <div class="outgoing-chats">
-        <a href="/templates/thread.html" class="message-button">
-          <div class="outgoing-msg">
-            <div class="outgoing-chats-msg">
-              <p>{{ message.message_content }}</p>
-              {% if message.timestamp %}
-                <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-              {% endif %}
-            </div>
-          </div>
-        </a>
-      </div>
+        <div class="msg-page">
+          {% for message in messages %}
+            {% if message.sender == user.username %}
+              <!-- Outgoing messages -->
+              <div class="outgoing-chats">
+                <a href="{% url 'thread' message.thread.id %}" class="message-button">
+                  <div class="outgoing-msg">
+                    <div class="outgoing-chats-msg">
+                      <p>{{ message.message_content }}</p>
+                      {% if message.timestamp %}
+                        <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              </div>
     {% else %}
       <!-- Incoming messages -->
-      <div class="received-chats">
-        <a href="/templates/thread.html" class="message-button">
-          <div class="received-msg">
-            <div class="received-msg-inbox">
-              <p>{{ message.message_content }}</p>
-              {% if message.timestamp %}
-                <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-              {% endif %}
+        <div class="received-chats">
+          <a href="{% url 'thread' message.thread.id %}" class="message-button">
+            <div class="received-msg">
+              <div class="received-msg-inbox">
+                <p>{{ message.message_content }}</p>
+                {% if message.timestamp %}
+                  <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                {% endif %}
+              </div>
             </div>
-          </div>
-        </a>
-      </div>
-    {% endif %}
-  {% endfor %}
-</div>
+          </a>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
 
           <!-- msg-bottom section -->
           <form method="post" action="{% url 'chat' group.id %}">

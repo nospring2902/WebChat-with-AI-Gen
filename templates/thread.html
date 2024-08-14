@@ -17,23 +17,59 @@
     <div class="chat-page">
       <div class="msg-inbox">
         <div class="msg-page">
+
+          <!--Display the first message-->
           <div class="received-chats">
             <div class="received-msg">
               <div class="received-msg-inbox">
-                <p>{{ message.content }}</p>
-                {% if message.timestamp %}
-                  <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                <p>{{ first_message.message_content }}</p>
+                {% if first_message.timestamp %}
+                  <span class="time">{{ first_message.timestamp|date:"H:i PM | M d" }}</span>
                 {% endif %}
               </div>
             </div>
           </div>
-        </div>
 
+          <div class="msg-page">
+            {% for message in messages %}
+              {% if message != first_message %}
+                {% if message.sender == user.username %}
+                  <!-- Outgoing messages -->
+                  <div class="outgoing-chats">
+                      <div class="outgoing-msg">
+                        <div class="outgoing-chats-msg">
+                          <p>{{ message.message_content }}</p>
+                          {% if message.timestamp %}
+                            <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                  </div>
+                {% else %}
+        <!-- Incoming messages -->
+                  <div class="received-chats">
+                    <div class="received-msg">
+                      <div class="received-msg-inbox">
+                        <p>{{ message.message_content }}</p>
+                        {% if message.timestamp %}
+                          <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
 
+    </div>
+
+      <form method="post" action="{% url 'thread' thread.id %}">
+        {% csrf_token %}
         <div class="msg-bottom">
             <div class="input-group">
               <input
                 type="text"
+                name="message_content"
                 class="form-control"
                 placeholder="Write message..."
               />
@@ -42,7 +78,8 @@
                 <i class="bi bi-send"></i>
               </span>
             </div>
-        <!-- Add additional related messages or functionality here -->
+          </div>
+        </form>
       </div>
     </div>
   </div>

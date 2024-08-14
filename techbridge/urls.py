@@ -22,6 +22,6 @@ urlpatterns = [
     
     path('chat/<int:group_id>/', views.chat_view, name='chat'),
 
-    # path('thread/<int:message_id>/', views.thread_view, name='thread'), 
+    path('thread/<int:thread_id>/', views.thread_view, name='thread'), 
     # path('translate/', views.translate_text, name='translate_text'),
 ]
