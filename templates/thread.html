@@ -3,85 +3,141 @@
 <head>
   <link rel="stylesheet" href="/static/css/chat.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+  <style>
+    .your-account {
+      font-size: 12px; /* Smaller text */
+      color: #888; /* Gray color for better aesthetics */
+      margin-bottom: 2px; /* Less space between the name and the chat box */
+      margin-right: 10px; /* Aligns the name with the chat box */
+      text-align: right;
+    }
+
+    .sender-name {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 2px;
+      margin-left: 10px;
+    }
+
+    .outgoing-chats, .received-chats {
+      margin-bottom: 30px; /* Adds larger spacing between messages */
+    }
+
+    .message-link {
+      text-decoration: none;
+      color: inherit; /* Keeps the text color the same as the surrounding text */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <div class="msg-header">
-      <a href="{% url 'chat' group.id %}" class="back-button">
-        <i class="bi bi-arrow-left"></i>
-      </a>
-      <div class="active">
-       
+      <div class="container1">
+        <a href="{% url 'chat' group.id %}" class="back-button">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        
       </div>
     </div>
+
     <div class="chat-page">
       <div class="msg-inbox">
-        <div class="msg-page">
+        <div class="msg-page" id="messageContainer">
 
-          <!--Display the first message-->
+          <!-- Hiển thị tin nhắn đầu tiên -->
           <div class="received-chats">
+            <div class="sender-name">{{ first_message.sender.username }}</div>
             <div class="received-msg">
               <div class="received-msg-inbox">
                 <p>{{ first_message.message_content }}</p>
                 {% if first_message.timestamp %}
-                  <span class="time">{{ first_message.timestamp|date:"H:i PM | M d" }}</span>
+                  <span class="time">{{ first_message.timestamp }}</span>
                 {% endif %}
               </div>
             </div>
           </div>
 
-          <div class="msg-page">
-            {% for message in messages %}
-              {% if message != first_message %}
-                {% if message.sender == user.username %}
-                  <!-- Outgoing messages -->
-                  <div class="outgoing-chats">
-                      <div class="outgoing-msg">
-                        <div class="outgoing-chats-msg">
-                          <p>{{ message.message_content }}</p>
-                          {% if message.timestamp %}
-                            <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-                          {% endif %}
-                        </div>
-                      </div>
-                  </div>
-                {% else %}
-        <!-- Incoming messages -->
-                  <div class="received-chats">
-                    <div class="received-msg">
-                      <div class="received-msg-inbox">
-                        <p>{{ message.message_content }}</p>
-                        {% if message.timestamp %}
-                          <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-                        {% endif %}
-                      </div>
+          {% for message in messages %}
+          {% if message != first_message %}
+            {% if message.sender_id == user_id %}
+              <!-- Outgoing messages -->
+              <div class="outgoing-chats">
+                <div class="your-account">You</div>
+                <a href="{% url 'thread' message.thread.id %}" class="message-link">
+                  <div class="outgoing-msg">
+                    <div class="outgoing-chats-msg">
+                      <p>{{ message.message_content }}</p>
+                      {% if message.timestamp %}
+                        <span class="time">{{ message.timestamp }}</span>
+                      {% endif %}
                     </div>
                   </div>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
+                </a>
+              </div>
+            {% else %}
+              <!-- Incoming messages -->
+              <div class="received-chats">
+                <div class="sender-name">{{ message.sender.username }}</div>
+                <a href="{% url 'thread' message.thread.id %}" class="message-link">
+                  <div class="received-msg">
+                    <div class="received-msg-inbox">
+                      <p>{{ message.message_content }}</p>
+                      {% if message.timestamp %}
+                        <span class="time">{{ message.timestamp}}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% endif %}
+          {% endif %}
+          {% endfor %}
 
-    </div>
+        </div>
+      </div>
 
       <form method="post" action="{% url 'thread' thread.id %}">
         {% csrf_token %}
         <div class="msg-bottom">
-            <div class="input-group">
-              <input
-                type="text"
-                name="message_content"
-                class="form-control"
-                placeholder="Write message..."
-              />
-
-              <span class="input-group-text send-icon">
-                <i class="bi bi-send"></i>
-              </span>
-            </div>
+          <div class="input-group">
+            <input
+              type="text"
+              name="message_content"
+              class="form-control"
+              id="messageInput"
+              placeholder="Write message..."
+            />
+            <button type="submit" class="input-group-text send-icon">
+              <i class="bi bi-send"></i>
+            </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
+
+  <script>
+    // Scroll to the bottom of the message container
+    function scrollToBottom() {
+      const messageContainer = document.getElementById('messageContainer');
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+
+    // Call the scrollToBottom function when the page loads
+    window.onload = scrollToBottom;
+
+    // Call the scrollToBottom function when a new message is added
+    document.getElementById('messageForm').addEventListener('submit', function() {
+      setTimeout(scrollToBottom, 100); // Adjust the timeout if needed
+    });
+
+    // Handle the Enter key press
+    document.getElementById('messageInput').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();  // Prevent the default action (new line)
+        document.getElementById('messageForm').submit();  // Submit the form
+      }
+    });
+  </script>
 </body>
 </html>
