@@ -55,11 +55,10 @@
         {% for message in messages %}
         {% if message.sender_id == user_id %}
 
-          
             <!-- Outgoing messages -->
             <div class="outgoing-chats">
               <div class="your-account">You</div>
-              <a href="/templates/thread.html" class="message-link">
+              <a href="{% url 'thread' message.thread.id %}" class="message-link">
                 <div class="outgoing-msg">
                   <div class="outgoing-chats-msg">
                     <p>{{ message.message_content }}</p>
@@ -74,7 +73,7 @@
             <!-- Incoming messages -->
             <div class="received-chats">
               <div class="sender-name">{{ message.sender.username }}</div>
-              <a href="/templates/thread.html" class="message-link">
+              <a href="{% url 'thread' message.thread.id %}" class="message-link">
                 <div class="received-msg">
                   <div class="received-msg-inbox">
                     <p>{{ message.message_content }}</p>
