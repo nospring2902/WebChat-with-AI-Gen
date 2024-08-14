@@ -162,9 +162,11 @@ def chat_view(request, group_id):
     # Kiểm tra xem người dùng có phải là thành viên của nhóm không
     if not GroupMember.objects.filter(group=group, user=request.user).exists():
         return redirect('dashboard')  # Nếu không phải là thành viên thì chuyển về dashboard
-
+     
     threads = GroupThread.objects.filter(group=group).select_related('first_message')
     messages = GroupMessage.objects.filter(thread__group=group).select_related('sender')
+    
+    
 
     if request.method == "POST":
         message_content = request.POST.get('message_content')
@@ -192,7 +194,7 @@ def chat_view(request, group_id):
     return render(request, 'chat.html', {
         'group': group,
         'messages': messages,
-        'user': request.user,
+        'user_id': request.user.id, 
     })
 '''
 @login_required
