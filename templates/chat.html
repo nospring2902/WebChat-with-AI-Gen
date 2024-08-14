@@ -63,7 +63,7 @@
                   <div class="outgoing-chats-msg">
                     <p>{{ message.message_content }}</p>
                     {% if message.timestamp %}
-                      <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                      <span class="time">{{ message.timestamp }}</span>
                     {% endif %}
                   </div>
                 </a>
@@ -79,7 +79,7 @@
                     <p>{{ message.message_content }}</p>
                   </a>
                     {% if message.timestamp %}
-                      <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                      <span class="time">{{ message.timestamp}}</span>
                     {% endif %}
                   </div>
                 </div>
