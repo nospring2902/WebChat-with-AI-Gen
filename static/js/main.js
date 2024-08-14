@@ -20,7 +20,7 @@
     const sticky = header_navbar.offsetTop;
     const logo = document.querySelector(".navbar-brand img");
 
-    if (window.pageYOffset > sticky) {
+    if (window.pageOffset > sticky) {
       header_navbar.classList.add("sticky");
       logo.src = "{% static 'images/logo/logo_white.png' %}";
     } else {
@@ -29,6 +29,9 @@
     }
 
     // show or hide the back-top-top button
+   
+    
+  
     const backToTop = document.querySelector(".back-to-top");
     if (
       document.body.scrollTop > 50 ||
@@ -39,6 +42,7 @@
       backToTop.style.display = "none";
     }
   };
+  
   
 
   // ==== for menu scroll
@@ -58,7 +62,7 @@
   function onScroll(event) {
     const sections = document.querySelectorAll(".page-scroll");
     const scrollPos =
-      window.pageYOffset ||
+      window.pageOffset ||
       document.documentElement.scrollTop ||
       document.body.scrollTop;
 

@@ -4,6 +4,8 @@
   <link rel="stylesheet" href="/static/css/chat.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
   <style>
+    
+
     .your-account {
       font-size: 12px; /* Smaller text */
       color: #888; /* Gray color for better aesthetics */
@@ -27,6 +29,26 @@
       text-decoration: none;
       color: inherit; /* Keeps the text color the same as the surrounding text */
     }
+
+    .popup {
+      display: none; /* Ẩn popup theo mặc định */
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000; /* Đảm bảo popup hiển thị trên các phần tử khác */
+      max-width: 300px;
+      border-radius: 5px;
+    }
+    
+    .popup.show {
+      display: block; /* Hiển thị popup khi cần */
+    }
+    
+    .popup-content {
+      overflow-wrap: break-word; /* Đảm bảo nội dung không bị tràn ra ngoài */
+    }
   </style>
 </head>
 <body>
@@ -36,7 +58,6 @@
         <a href="{% url 'chat' group.id %}" class="back-button">
           <i class="bi bi-arrow-left"></i>
         </a>
-        
       </div>
     </div>
 
@@ -63,31 +84,27 @@
               <!-- Outgoing messages -->
               <div class="outgoing-chats">
                 <div class="your-account">You</div>
-                <a href="{% url 'thread' message.thread.id %}" class="message-link">
-                  <div class="outgoing-msg">
-                    <div class="outgoing-chats-msg">
-                      <p>{{ message.message_content }}</p>
-                      {% if message.timestamp %}
-                        <span class="time">{{ message.timestamp }}</span>
-                      {% endif %}
-                    </div>
+                <div class="outgoing-msg" data-message-id="{{ message.id }}">
+                  <div class="outgoing-chats-msg">
+                    <p>{{ message.message_content }}</p>
+                    {% if message.timestamp %}
+                      <span class="time">{{ message.timestamp }}</span>
+                    {% endif %}
                   </div>
-                </a>
+                </div>
               </div>
             {% else %}
               <!-- Incoming messages -->
               <div class="received-chats">
                 <div class="sender-name">{{ message.sender.username }}</div>
-                <a href="{% url 'thread' message.thread.id %}" class="message-link">
-                  <div class="received-msg">
-                    <div class="received-msg-inbox">
-                      <p>{{ message.message_content }}</p>
-                      {% if message.timestamp %}
-                        <span class="time">{{ message.timestamp}}</span>
-                      {% endif %}
-                    </div>
+                <div class="received-msg" data-message-id="{{ message.id }}">
+                  <div class="received-msg-inbox">
+                    <p>{{ message.message_content }}</p>
+                    {% if message.timestamp %}
+                      <span class="time">{{ message.timestamp }}</span>
+                    {% endif %}
                   </div>
-                </a>
+                </div>
               </div>
             {% endif %}
           {% endif %}
@@ -116,27 +133,42 @@
     </div>
   </div>
 
+  <!-- Popup container -->
+  <div id="messagePopup" class="popup">
+    <span id="popupContent">Loading...</span>
+  </div>
+
   <script>
-    // Scroll to the bottom of the message container
-    function scrollToBottom() {
-      const messageContainer = document.getElementById('messageContainer');
-      messageContainer.scrollTop = messageContainer.scrollHeight;
-    }
+    const popup = document.getElementById('messagePopup');
+    const popupContent = document.getElementById('popupContent');
 
-    // Call the scrollToBottom function when the page loads
-    window.onload = scrollToBottom;
+    document.querySelectorAll('[data-message-id]').forEach(element => {
+      element.addEventListener('mouseover', function(event) {
+        const messageId = this.getAttribute('data-message-id'); // Lấy ID tin nhắn từ thuộc tính data
+        popup.style.top = `${event.clientY + 10}px`;
+        popup.style.left = `${event.clientX + 10}px`;
+        popup.classList.add('show');
+        
+        // Gửi yêu cầu Ajax để lấy nội dung dịch
+        fetch(`/get_translation/${messageId}/`)
+          .then(response => response.json())
+          .then(data => {
+            popupContent.innerHTML = data.translation; // Cập nhật nội dung popup
+          })
+          .catch(error => {
+            console.error('Error fetching translation:', error);
+            popupContent.innerHTML = 'Error fetching word explanation!';
+          });
+      });
 
-    // Call the scrollToBottom function when a new message is added
-    document.getElementById('messageForm').addEventListener('submit', function() {
-      setTimeout(scrollToBottom, 100); // Adjust the timeout if needed
-    });
+      element.addEventListener('mousemove', function(event) {
+        popup.style.top = `${event.clientY + 10}px`;
+        popup.style.left = `${event.clientX + 10}px`;
+      });
 
-    // Handle the Enter key press
-    document.getElementById('messageInput').addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();  // Prevent the default action (new line)
-        document.getElementById('messageForm').submit();  // Submit the form
-      }
+      element.addEventListener('mouseout', function() {
+        popup.classList.remove('show');
+      });
     });
   </script>
 </body>
