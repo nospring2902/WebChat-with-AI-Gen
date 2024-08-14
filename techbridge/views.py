@@ -5,8 +5,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from .models import Group, GroupMember
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login
+from .models import Group, GroupMember, GroupMessage, GroupThread
+from django.utils import timezone
+from django.conf import settings
+from .aifunction import summarize_text
+import requests
 def prebase(request):
     return render(request, 'prebase.html')
 
@@ -75,20 +80,7 @@ def delete_group(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     group.delete()
     return redirect('dashboard')
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
-from .forms import SignUpForm
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from .models import Group, GroupMember, GroupMessage, GroupThread
-from django.utils import timezone
 
-
-from django.shortcuts import render
-from django.conf import settings
-import requests
 
 
 def prebase(request):
@@ -193,21 +185,15 @@ def chat_view(request, group_id):
         'messages': messages,
         'user': request.user,
     })
-'''
 @login_required
-def thread_view(request, message_id):
-    # Lấy tin nhắn dựa trên message_id
-    selected_message = get_object_or_404(GroupMessage, id=message_id)
-    
-    # Lấy GroupThread mà tin nhắn thuộc về
-    group_thread = get_object_or_404(GroupThread, first_message=selected_message)
-    
-    # Lấy tất cả các tin nhắn trong thread
-    messages = GroupMessage.objects.filter(thread=group_thread).order_by('timestamp')
-    
-    # Render trang thread với dữ liệu tin nhắn và thread
+def thread_view(request, thread_id):
+    # Lấy thread cụ thể dựa trên thread_id
+    thread = get_object_or_404(GroupThread, id=thread_id)
+
+    # Lấy tất cả tin nhắn trong thread này
+    messages = GroupMessage.objects.filter(thread=thread).select_related('sender')
+    kekka = summarize_text(paragraph)
     return render(request, 'thread.html', {
-        'selected_message': selected_message,
-        'messages': messages
+        'thread': thread,
+        'messages': messages,
     })
-'''

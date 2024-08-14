@@ -11,38 +11,40 @@
         <i class="bi bi-arrow-left"></i>
       </a>
       <div class="active">
-       
+        <p>{{ thread.group.group_name }}</p>
       </div>
     </div>
     <div class="chat-page">
       <div class="msg-inbox">
         <div class="msg-page">
-          <div class="received-chats">
-            <div class="received-msg">
-              <div class="received-msg-inbox">
-                <p>{{ message.content }}</p>
-                {% if message.timestamp %}
-                  <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-                {% endif %}
-              </div>
+          {% for message in messages %}
+    <div class="{% if message.sender == user %}outgoing-chats{% else %}received-chats{% endif %}">
+        <a href="{% url 'thread' message.thread.id %}" class="message-button">
+            <div class="{% if message.sender == user %}outgoing-msg{% else %}received-msg{% endif %}">
+                <div class="{% if message.sender == user %}outgoing-chats-msg{% else %}received-msg-inbox{% endif %}">
+                    <p>{{ message.message_content }}</p>
+                    {% if message.timestamp %}
+                        <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                    {% endif %}
+                </div>
             </div>
-          </div>
+        </a>
+    </div>
+{% endfor %}
+
         </div>
 
-
         <div class="msg-bottom">
+          <form method="post" action="{% url 'thread' thread.id %}">
+            {% csrf_token %}
             <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Write message..."
-              />
-
+              <input type="text" name="message_content" class="form-control" placeholder="Write message..." />
               <span class="input-group-text send-icon">
                 <i class="bi bi-send"></i>
               </span>
             </div>
-        <!-- Add additional related messages or functionality here -->
+          </form>
+        </div>
       </div>
     </div>
   </div>
