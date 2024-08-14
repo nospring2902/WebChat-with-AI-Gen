@@ -5,6 +5,11 @@
 }
 
 /* Styling the main container */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 .container {
     width: 100%;
     margin: auto;
@@ -49,12 +54,16 @@ img {
 }
 
 /* styling user-name */
+
+
 .active {
-    width: 150px;
-    float: left;
+    flex-grow: 1; /* Allows the group name to take up available space */
     color: black;
     font-weight: bold;
-    margin: 0 0 0 5px;
+    margin: 0 5px;
+    overflow: hidden; /* Ensures that text will be contained within the available space */
+    text-overflow: ellipsis; /* Adds "..." if the text overflows */
+    white-space: nowrap; /* Keeps the text on one line */
 }
 
 /* Styling the inbox */
@@ -72,12 +81,12 @@ img {
 .back-button {
     display: inline-block;
     font-size: 20px;
-    color: #007bff; /* Bootstrap primary color or your choice */
+    color: #2449c3; /* Bootstrap primary color or your choice */
     text-decoration: none;
 }
 
 .back-button:hover {
-    color: #007bff; /* Bootstrap primary color or your choice */
+    color: #2449c3; /* Bootstrap primary color or your choice */
     /* Darker shade for hover effect */
 }
 
@@ -199,8 +208,10 @@ p {
 }
 
 .outgoing-chats-msg p {
-    background-image: linear-gradient(45deg, #ee087f 0%, #DD2A7B 25%, #9858ac 50%, #8134AF 75%, #515BD4 100%);
+    background-image: linear-gradient(45deg, #2449c3 0%, #2449c3 100%);
     color: #fff;
+    
+
     border-radius: 10px;
     font-size: 14px;
     padding: 1rem;
@@ -261,7 +272,7 @@ p {
     }
 }
 .active p {
-    color: #007bff; /* Bootstrap primary color or your choice */
+    color: #2449c3; /* Bootstrap primary color or your choice */
      /* Màu xanh nước biển */
     white-space: nowrap; /* Giữ văn bản trên một dòng */
     overflow: hidden; /* Ẩn phần dư nếu quá dài */
