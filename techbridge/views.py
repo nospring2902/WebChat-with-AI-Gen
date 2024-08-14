@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages  # メッセージフレームワークをインポート
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate,login
 from .forms import SignUpForm
 from django.contrib.auth.models import User
