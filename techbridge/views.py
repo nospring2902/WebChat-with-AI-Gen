@@ -125,33 +125,24 @@ def chat_view(request, group_id):
 
 @login_required
 def thread_view(request, thread_id):
-    # 1. 指定されたメッセージを取得
-    message = get_object_or_404(GroupMessage, id=thread_id)
-    
-    # 2. メッセージが属するスレッドを取得
-    thread = message.thread
-    
-    # 3. スレッド内の全メッセージを取得し、タイムスタンプでソート
+    thread = get_object_or_404(GroupThread, id=thread_id)
+    first_message = thread.first_message
     messages = GroupMessage.objects.filter(thread=thread).order_by('timestamp')
-    
-    # 4. グループ情報を取得
     group = thread.group
 
-    # 5. POST リクエストの処理
     if request.method == "POST":
         message_content = request.POST.get('message_content')
         if message_content:
-            # 新しい返信メッセージを作成
             GroupMessage.objects.create(
                 sender=request.user,
                 thread=thread,
                 message_content=message_content
             )
-            return redirect('thread', message_id=thread_id)  # スレッドのページにリダイレクト
-    
-    # 6. テンプレートにデータを渡してレンダリング
+            return redirect('thread', thread_id=thread_id)
+
     return render(request, 'thread.html', {
-        'message': message,
+        'thread': thread,
+        'first_message': first_message,
         'messages': messages,
-        'group': group
+        'group': group,
     })

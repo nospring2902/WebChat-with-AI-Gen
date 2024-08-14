@@ -47,21 +47,21 @@
               </div>
     {% else %}
       <!-- Incoming messages -->
-        <div class="received-chats">
-          <a href="{% url 'thread' message.thread.id %}" class="message-button">
-            <div class="received-msg">
-              <div class="received-msg-inbox">
-                <p>{{ message.message_content }}</p>
-                {% if message.timestamp %}
-                  <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
-                {% endif %}
+              <div class="received-chats">
+                <a href="{% url 'thread' message.thread.id %}" class="message-button">
+                  <div class="received-msg">
+                    <div class="received-msg-inbox">
+                      <p>{{ message.message_content }}</p>
+                      {% if message.timestamp %}
+                        <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
               </div>
-            </div>
-          </a>
+            {% endif %}
+          {% endfor %}
         </div>
-      {% endif %}
-    {% endfor %}
-  </div>
 
           <!-- msg-bottom section -->
           <form method="post" action="{% url 'chat' group.id %}">
