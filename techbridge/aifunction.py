@@ -36,7 +36,6 @@ def summarize_text(paragraph, language):
     If the conversation is too short, the answer should be: Not enough information to summarize.
     This is the conversation: "{paragraph}"
     """
-    
     # Gọi API để tóm tắt văn bản
     response = model.generate_content(PROMPT)
     
