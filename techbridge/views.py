@@ -96,7 +96,7 @@ def chat_view(request, group_id):
 
     first_message_ids = [thread.first_message.id for thread in threads if thread.first_message]
     # Fetch all messages related to the first messages of the threads
-    messages = GroupMessage.objects.filter(id__in=first_message_ids).select_related('sender')
+    messages = GroupMessage.objects.filter(id__in=first_message_ids).select_related('sender').order_by('timestamp')
     user_profile = UserProfile.objects.get(user=request.user)
     main_language = user_profile.main_language
     if request.method == "POST":
@@ -182,7 +182,8 @@ def thread_view(request, thread_id):
         'first_message': first_message,
         'messages': messages,
         'group': group,
-        'main_language': main_language
+        'main_language': main_language,
+        'user_id':request.user.id
     })
 
 @login_required
@@ -191,12 +192,16 @@ def update_summary(request, thread_id):
     if request.method == 'POST':
         thread = get_object_or_404(GroupThread, id=thread_id)
         messages = GroupMessage.objects.filter(thread=thread).order_by('timestamp')
-        all_texts = ' '.join(message.message_content for message in messages)
+        all_texts = '. '.join(message.message_content for message in messages)
         
         user_profile = UserProfile.objects.get(user=request.user)
         main_language = user_profile.main_language
-        
-        summary = summarize_text(all_texts, main_language)
-        
+        if main_language=='ja':
+            language='Japanese'
+        elif main_language=='en':
+            language='English'
+        elif main_language=='vi':
+            language='Vietnamese'
+        summary = summarize_text(all_texts, language)
         return JsonResponse({'summary': summary})
     return JsonResponse({'error': 'Invalid request'}, status=400)

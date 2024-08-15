@@ -116,27 +116,70 @@
         z-index: 900;
         display: none;
     }
+    .your-account {
+      font-size: 12px; /* Smaller text */
+      color: #888; /* Gray color for better aesthetics */
+      margin-bottom: 2px; /* Less space between the name and the chat box */
+      margin-right: 10px; /* Aligns the name with the chat box */
+      text-align: right;
+    }
 
+    .sender-name {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 2px;
+      margin-left: 10px;
+    }
+
+    .outgoing-chats, .received-chats {
+      margin-bottom: 30px; /* Adds larger spacing between messages */
+    }
+
+    .message-link {
+      text-decoration: none;
+      color: inherit; /* Keeps the text color the same as the surrounding text */
+    }
+
+    .hover {
+      display: none; /* Ẩn hover theo mặc định */
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000; /* Đảm bảo hover hiển thị trên các phần tử khác */
+      max-width: 300px;
+      border-radius: 5px;
+    }
+    
+    .hover.show {
+      display: block; /* Hiển thị hover khi cần */
+    }
+    
+    .hover-content {
+      overflow-wrap: break-word; /* Đảm bảo nội dung không bị tràn ra ngoài */
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="msg-header">
-      <a href="{% url 'chat' group.id %}" class="back-button">
-        <i class="bi bi-arrow-left"></i>
-      </a>
-      <div class="active">
-        <p>{{ thread.group.group_name }}</p>
+      <div class="container1">
+        <a href="{% url 'chat' group.id %}" class="back-button">
+          <i class="bi bi-arrow-left"></i>
+        </a>
       </div>
       <!-- Nút Create summary -->
-      <button id="create-summary-btn" class="create-summary-btn">Create summary</button>
+      <button id="create-summary-btn" class="create-summary-btn">Summary</button>
     </div>
+
     <div class="chat-page">
       <div class="msg-inbox">
-        <div class="msg-page">
+        <div class="msg-page" id="messageContainer">
 
-          <!--Display the first message-->
+          <!-- Hiển thị tin nhắn đầu tiên -->
           <div class="received-chats">
+            <div class="sender-name">{{ first_message.sender.username }}</div>
             <div class="received-msg">
               <div class="received-msg-inbox">
                 {% if main_language == "ja" %}
@@ -147,19 +190,20 @@
                   <p>{{ first_message.vietnamese }}</p>
                 {% endif %}
                 {% if first_message.timestamp %}
-                  <span class="time">{{ first_message.timestamp|date:"H:i PM | M d" }}</span>
+                  <span class="time">{{ first_message.timestamp }}</span>
                 {% endif %}
               </div>
             </div>
           </div>
 
-          <div class="msg-page">
+
             {% for message in messages %}
               {% if message != first_message %}
-                {% if message.sender == user.username %}
+                {% if message.sender_id == user_id %}
                   <!-- Outgoing messages -->
                   <div class="outgoing-chats">
-                      <div class="outgoing-msg">
+                    <div class="your-account">You</div>
+                      <div class="outgoing-msg" data-message-id="{{ message.id }}">
                         <div class="outgoing-chats-msg">
                           {% if main_language == "ja" %}
                           <p>{{ message.japanese }}</p>
@@ -169,7 +213,7 @@
                           <p>{{ message.vietnamese }}</p>
                           {% endif %}
                           {% if message.timestamp %}
-                            <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                            <span class="time">{{message.timestamp}}</span>
                           {% endif %}
                         </div>
                       </div>
@@ -177,7 +221,8 @@
                 {% else %}
         <!-- Incoming messages -->
                   <div class="received-chats">
-                    <div class="received-msg">
+                    <div class="sender-name">{{ message.sender.username }}</div>
+                    <div class="received-msg" data-message-id="{{ message.id }}">
                       <div class="received-msg-inbox">
                         {% if main_language == "ja" %}
                           <p>{{ message.japanese }}</p>
@@ -187,7 +232,7 @@
                           <p>{{ message.vietnamese }}</p>
                         {% endif %}
                         {% if message.timestamp %}
-                          <span class="time">{{ message.timestamp|date:"H:i PM | M d" }}</span>
+                          <span class="time">{{message.timestamp}}</span>
                         {% endif %}
                       </div>
                     </div>
@@ -197,18 +242,16 @@
             {% endfor %}
 
     </div>
+  </div>
       <!-- Pop-up bong bóng để hiển thị kết quả -->
       <div id="summary-popup" class="popup-content">
         <span id="close-popup">&times;</span>
         <div id="summary-content"></div>
       </div>
 
-    </div>
       <form method="post" action="{% url 'thread' thread.id %}">
         {% csrf_token %}
         <div class="msg-bottom">
-          <form method="post" action="{% url 'thread' thread.id %}">
-            {% csrf_token %}
             <div class="input-group">
               <input
                 type="text"
@@ -217,19 +260,22 @@
                 placeholder="Write message..."
               />
 
-              <span class="input-group-text send-icon">
+              <button type="submit" class="input-group-text send-icon">
                 <i class="bi bi-send"></i>
-              </span>
+              </button>
             </div>
           </div>
         </form>
       </div>
     </div>
-  </div>
+
 
   <!-- Transparent background khi pop-up hiện lên -->
   <div id="popup-background" class="popup-background"></div>
-
+  <!-- Popup container -->
+  <div id="messagePopup" class="hover">
+    <span id="popupContent">Loading...</span>
+  </div>
   <script>
     document.getElementById('create-summary-btn').addEventListener('click', function() {
       fetch("{% url 'update_summary' thread.id %}", {
@@ -252,6 +298,59 @@
       document.getElementById('summary-popup').style.display = 'none';
       document.getElementById('popup-background').style.display = 'none'; // Ẩn background mờ
     });
+
+
+    const popup = document.getElementById('messagePopup');
+    const popupContent = document.getElementById('popupContent');
+
+    document.querySelectorAll('[data-message-id]').forEach(element => {
+      element.addEventListener('mouseover', function(event) {
+        const messageId = this.getAttribute('data-message-id'); // Lấy ID tin nhắn từ thuộc tính data
+        popup.style.top = `${event.clientY + 10}px`;
+        popup.style.left = `${event.clientX + 10}px`;
+        popup.classList.add('show');
+        
+        // Gửi yêu cầu Ajax để lấy nội dung dịch
+        fetch(`/get_translation/${messageId}/`)
+          .then(response => response.json())
+          .then(data => {
+            popupContent.innerHTML = data.translation; // Cập nhật nội dung popup
+          })
+          .catch(error => {
+            console.error('Error fetching translation:', error);
+            popupContent.innerHTML = 'Error fetching word explanation!';
+          });
+      });
+
+      element.addEventListener('mousemove', function(event) {
+        popup.style.top = `${event.clientY + 10}px`;
+        popup.style.left = `${event.clientX + 10}px`;
+      });
+
+      element.addEventListener('mouseout', function() {
+        popup.classList.remove('show');
+      });
+    });
+    // Scroll to the bottom of the message container
+    function scrollToBottom() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Call the scrollToBottom function when the page loads
+        window.onload = scrollToBottom;
+
+        // Call the scrollToBottom function when a new message is added
+        document.getElementById('messageForm').addEventListener('submit', function() {
+            setTimeout(scrollToBottom, 100); // Adjust the timeout if needed
+        });
+        // Handle the Enter key press
+        document.getElementById('messageInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();  // Prevent the default action (new line)
+                document.getElementById('messageForm').submit();  // Submit the form
+            }
+        });
   </script>
 </body>
 </html>
