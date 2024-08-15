@@ -203,8 +203,8 @@
                   <!-- Outgoing messages -->
                   <div class="outgoing-chats">
                     <div class="your-account">You</div>
-                      <div class="outgoing-msg" data-message-id="{{ message.id }}">
-                        <div class="outgoing-chats-msg">
+                      <div class="outgoing-msg" >
+                        <div class="outgoing-chats-msg" data-message-id="{{ message.id }}">
                           {% if main_language == "ja" %}
                           <p>{{ message.japanese }}</p>
                           {% elif main_language == "en" %}
@@ -222,8 +222,8 @@
         <!-- Incoming messages -->
                   <div class="received-chats">
                     <div class="sender-name">{{ message.sender.username }}</div>
-                    <div class="received-msg" data-message-id="{{ message.id }}">
-                      <div class="received-msg-inbox">
+                    <div class="received-msg" >
+                      <div class="received-msg-inbox" data-message-id="{{ message.id }}">
                         {% if main_language == "ja" %}
                           <p>{{ message.japanese }}</p>
                         {% elif main_language == "en" %}
@@ -311,22 +311,24 @@
         popup.classList.add('show');
         
         // Gửi yêu cầu Ajax để lấy nội dung dịch
-        fetch(`/get_translation/${messageId}/`)
+        fetch(`/explanation/${messageId}/`)
           .then(response => response.json())
           .then(data => {
-            popupContent.innerHTML = data.translation; // Cập nhật nội dung popup
+            popupContent.innerHTML = data.explanation; // Cập nhật nội dung popup
           })
-          .catch(error => {
-            console.error('Error fetching translation:', error);
-            popupContent.innerHTML = 'Error fetching word explanation!';
-          });
+          // .catch(error => {
+          //   console.error('Error fetching explanation:', error);
+          //   popupContent.innerHTML = 'Error fetching word explanation!';
+          // });
       });
 
       element.addEventListener('mousemove', function(event) {
         popup.style.top = `${event.clientY + 10}px`;
         popup.style.left = `${event.clientX + 10}px`;
       });
-
+      popup.addEventListener('mouseover', function() {
+          clearTimeout(timer);
+      });
       element.addEventListener('mouseout', function() {
         popup.classList.remove('show');
       });

@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from .models import Group, GroupMember, GroupMessage, GroupThread, UserProfile
-from .aifunction import translate,summarize_text
+from .aifunction import translate,summarize_text,word_explanation
 from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render
@@ -205,3 +205,16 @@ def update_summary(request, thread_id):
         summary = summarize_text(all_texts, language)
         return JsonResponse({'summary': summary})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+@login_required
+def explanation(request, message_id):
+    message = get_object_or_404(GroupMessage, id=message_id)
+    paragraph = message.message_content
+    user_profile = UserProfile.objects.get(user=request.user)
+    if user_profile.main_language == 'en':
+        language = 'English'
+    elif user_profile.main_language == 'ja':
+        language = 'Japanese'
+    elif user_profile.main_language == 'vi':
+        language = 'Vietnamese'
+    explanation = word_explanation(paragraph, language)
+    return JsonResponse({'explanation': explanation})
