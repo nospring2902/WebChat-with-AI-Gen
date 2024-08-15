@@ -78,8 +78,12 @@ WSGI_APPLICATION = 'ASAP.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'techbridge',
+        'USER': 'root',
+        'PASSWORD': 'YTefnp29022004@',
+        'HOST': 'localhost',  # or '127.0.0.1' or your MySQL server's IP address
+        'PORT': '3306',  # Default port for MySQL
     }
 }
 
