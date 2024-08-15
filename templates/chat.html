@@ -52,31 +52,39 @@
             {% for message in messages %}
             {% if message.sender_id == user_id %}
             <div class="outgoing-chats">
-                <div class="your-account">You</div>
-                <a href="{% url 'thread' message.thread.id %}" class="message-link">
-                    <div class="outgoing-msg">
-                        <div class="outgoing-chats-msg">
-                            <p>{{ message.message_content }}</p>
-                            {% if message.timestamp %}
-                            <span class="time">{{ message.timestamp }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
+              <div class="your-account">You</div>
+              <a href="{% url 'thread' message.thread.id %}" class="message-link">
+                <div class="outgoing-msg">
+                  <div class="outgoing-chats-msg">
+                    <p>{{ message.message_content }}</p>
+                    {% if message.timestamp %}
+                      <span class="time">{{message.timestamp}}</span>
+                    {% endif %}
+                  </div>
+                </div>
                 </a>
             </div>
             {% else %}
             <div class="received-chats">
-                <div class="sender-name">{{ message.sender.username }}</div>
-                <a href="{% url 'thread' message.thread.id %}" class="message-link">
-                    <div class="received-msg">
-                        <div class="received-msg-inbox">
-                            <p>{{ message.message_content }}</p>
-                            {% if message.timestamp %}
-                            <span class="time">{{ message.timestamp}}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </a>
+              <div class="sender-name">{{ message.sender.username }}</div>
+              <div class="received-msg">
+                <div class="received-msg-inbox">
+                    <a href="{% url 'thread' message.thread.id %}" class="message-link">
+                    {% if main_language == "ja" %}
+                      <p>{{ message.japanese }}</p>
+                    {% elif main_language == "en" %}
+                      <p>{{ message.english }}</p>
+                    {% elif main_language == "vi" %}
+                      <p>{{ message.vietnamese }}</p>
+                    {% endif %}
+                    {% if message.timestamp %}
+                      <span class="time">{{message.timestamp}}</span>
+                    {% endif %}
+                  
+                  </div>
+                
+                </div>
+            </a>
             </div>
             {% endif %}
             {% endfor %}

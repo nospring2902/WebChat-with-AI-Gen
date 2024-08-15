@@ -4,8 +4,118 @@
   <link rel="stylesheet" href="/static/css/chat.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
   <style>
-    
+    /* Pop-up container */
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+        align-items: center;
+        justify-content: center;
+    }
 
+    /* Pop-up content */
+    .popup-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Chiều ngang gần bằng với màn hình chat */
+        height: 50%; /* Chiều cao khoảng 50% màn hình */
+        text-align: center;
+        position: relative;
+    }
+
+    /* Close button */
+    .popup-content .close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .popup-content .close:hover,
+    .popup-content .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Create Summary button */
+    .create-summary-btn {
+        margin-left: auto;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .create-summary-btn:hover {
+        background-color: #45a049;
+    }
+
+    /* CSS cho pop-up nằm ở giữa và có kích thước lớn */
+    #summary-popup {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        border-radius: 10px;
+        width: 80%; /* Chiều rộng pop-up */
+        height: 50%; /* Chiều cao pop-up */
+    }
+
+    #summary-popup #close-popup {
+        cursor: pointer;
+        color: #666;
+        font-size: 18px;
+        position: absolute;
+        right: 15px;
+        top: 10px;
+    }
+
+    #summary-popup #summary-content {
+        margin-top: 20px;
+    }
+
+    /* CSS cho nút Create summary */
+    #create-summary-btn {
+        margin-left: 10px;
+    }
+
+    /* CSS cho header */
+    .msg-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Transparent background for the entire page when pop-up is active */
+    .popup-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 900;
+        display: none;
+    }
     .your-account {
       font-size: 12px; /* Smaller text */
       color: #888; /* Gray color for better aesthetics */
@@ -30,23 +140,23 @@
       color: inherit; /* Keeps the text color the same as the surrounding text */
     }
 
-    .popup {
-      display: none; /* Ẩn popup theo mặc định */
+    .hover {
+      display: none; /* Ẩn hover theo mặc định */
       position: absolute;
       background-color: white;
       border: 1px solid #ccc;
       padding: 10px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000; /* Đảm bảo popup hiển thị trên các phần tử khác */
+      z-index: 1000; /* Đảm bảo hover hiển thị trên các phần tử khác */
       max-width: 300px;
       border-radius: 5px;
     }
     
-    .popup.show {
-      display: block; /* Hiển thị popup khi cần */
+    .hover.show {
+      display: block; /* Hiển thị hover khi cần */
     }
     
-    .popup-content {
+    .hover-content {
       overflow-wrap: break-word; /* Đảm bảo nội dung không bị tràn ra ngoài */
     }
   </style>
@@ -59,6 +169,8 @@
           <i class="bi bi-arrow-left"></i>
         </a>
       </div>
+      <!-- Nút Create summary -->
+      <button id="create-summary-btn" class="create-summary-btn">Summary</button>
     </div>
 
     <div class="chat-page">
@@ -70,7 +182,13 @@
             <div class="sender-name">{{ first_message.sender.username }}</div>
             <div class="received-msg">
               <div class="received-msg-inbox">
-                <p>{{ first_message.message_content }}</p>
+                {% if main_language == "ja" %}
+                  <p>{{ first_message.japanese }}</p>
+                {% elif main_language == "en" %}
+                  <p>{{ first_message.english }}</p>
+                {% elif main_language == "vi" %}
+                  <p>{{ first_message.vietnamese }}</p>
+                {% endif %}
                 {% if first_message.timestamp %}
                   <span class="time">{{ first_message.timestamp }}</span>
                 {% endif %}
@@ -78,67 +196,110 @@
             </div>
           </div>
 
-          {% for message in messages %}
-          {% if message != first_message %}
-            {% if message.sender_id == user_id %}
-              <!-- Outgoing messages -->
-              <div class="outgoing-chats">
-                <div class="your-account">You</div>
-                <div class="outgoing-msg" data-message-id="{{ message.id }}">
-                  <div class="outgoing-chats-msg">
-                    <p>{{ message.message_content }}</p>
-                    {% if message.timestamp %}
-                      <span class="time">{{ message.timestamp }}</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            {% else %}
-              <!-- Incoming messages -->
-              <div class="received-chats">
-                <div class="sender-name">{{ message.sender.username }}</div>
-                <div class="received-msg" data-message-id="{{ message.id }}">
-                  <div class="received-msg-inbox">
-                    <p>{{ message.message_content }}</p>
-                    {% if message.timestamp %}
-                      <span class="time">{{ message.timestamp }}</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            {% endif %}
-          {% endif %}
-          {% endfor %}
 
-        </div>
+            {% for message in messages %}
+              {% if message != first_message %}
+                {% if message.sender_id == user_id %}
+                  <!-- Outgoing messages -->
+                  <div class="outgoing-chats">
+                    <div class="your-account">You</div>
+                      <div class="outgoing-msg" data-message-id="{{ message.id }}">
+                        <div class="outgoing-chats-msg">
+                          {% if main_language == "ja" %}
+                          <p>{{ message.japanese }}</p>
+                          {% elif main_language == "en" %}
+                          <p>{{ message.english }}</p>
+                          {% elif main_language == "vi" %}
+                          <p>{{ message.vietnamese }}</p>
+                          {% endif %}
+                          {% if message.timestamp %}
+                            <span class="time">{{message.timestamp}}</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                  </div>
+                {% else %}
+        <!-- Incoming messages -->
+                  <div class="received-chats">
+                    <div class="sender-name">{{ message.sender.username }}</div>
+                    <div class="received-msg" data-message-id="{{ message.id }}">
+                      <div class="received-msg-inbox">
+                        {% if main_language == "ja" %}
+                          <p>{{ message.japanese }}</p>
+                        {% elif main_language == "en" %}
+                          <p>{{ message.english }}</p>
+                        {% elif main_language == "vi" %}
+                          <p>{{ message.vietnamese }}</p>
+                        {% endif %}
+                        {% if message.timestamp %}
+                          <span class="time">{{message.timestamp}}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+    </div>
+  </div>
+      <!-- Pop-up bong bóng để hiển thị kết quả -->
+      <div id="summary-popup" class="popup-content">
+        <span id="close-popup">&times;</span>
+        <div id="summary-content"></div>
       </div>
 
       <form method="post" action="{% url 'thread' thread.id %}">
         {% csrf_token %}
         <div class="msg-bottom">
-          <div class="input-group">
-            <input
-              type="text"
-              name="message_content"
-              class="form-control"
-              id="messageInput"
-              placeholder="Write message..."
-            />
-            <button type="submit" class="input-group-text send-icon">
-              <i class="bi bi-send"></i>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+            <div class="input-group">
+              <input
+                type="text"
+                name="message_content"
+                class="form-control"
+                placeholder="Write message..."
+              />
 
+              <button type="submit" class="input-group-text send-icon">
+                <i class="bi bi-send"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+  <!-- Transparent background khi pop-up hiện lên -->
+  <div id="popup-background" class="popup-background"></div>
   <!-- Popup container -->
-  <div id="messagePopup" class="popup">
+  <div id="messagePopup" class="hover">
     <span id="popupContent">Loading...</span>
   </div>
-
   <script>
+    document.getElementById('create-summary-btn').addEventListener('click', function() {
+      fetch("{% url 'update_summary' thread.id %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('summary-content').innerText = data.summary;
+        document.getElementById('summary-popup').style.display = 'block';
+        document.getElementById('popup-background').style.display = 'block'; // Hiển thị background mờ
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('close-popup').addEventListener('click', function() {
+      document.getElementById('summary-popup').style.display = 'none';
+      document.getElementById('popup-background').style.display = 'none'; // Ẩn background mờ
+    });
+
+
     const popup = document.getElementById('messagePopup');
     const popupContent = document.getElementById('popupContent');
 
@@ -170,6 +331,26 @@
         popup.classList.remove('show');
       });
     });
+    // Scroll to the bottom of the message container
+    function scrollToBottom() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Call the scrollToBottom function when the page loads
+        window.onload = scrollToBottom;
+
+        // Call the scrollToBottom function when a new message is added
+        document.getElementById('messageForm').addEventListener('submit', function() {
+            setTimeout(scrollToBottom, 100); // Adjust the timeout if needed
+        });
+        // Handle the Enter key press
+        document.getElementById('messageInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();  // Prevent the default action (new line)
+                document.getElementById('messageForm').submit();  // Submit the form
+            }
+        });
   </script>
 </body>
 </html>
