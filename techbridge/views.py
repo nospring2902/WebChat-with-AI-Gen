@@ -5,9 +5,10 @@ from .forms import SignUpForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from .models import Group, GroupMember, GroupMessage, GroupThread
-
+from django.http import Http404, JsonResponse
+from .models import Group, GroupMember, GroupMessage, GroupThread, UserProfile
+from .aifunction import translate,summarize_text,word_explanation
+from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render
 from django.conf import settings
@@ -96,17 +97,33 @@ def chat_view(request, group_id):
     first_message_ids = [thread.first_message.id for thread in threads if thread.first_message]
     # Fetch all messages related to the first messages of the threads
     messages = GroupMessage.objects.filter(id__in=first_message_ids).select_related('sender').order_by('timestamp')
-    
+    user_profile = UserProfile.objects.get(user=request.user)
+    main_language = user_profile.main_language
     if request.method == "POST":
         message_content = request.POST.get('message_content')
         if message_content:
             # Tạo thread mới trước
             thread = GroupThread.objects.create(group=group)
-
+            
+            if main_language=='ja':
+                japanese=message_content
+                english=translate(message_content,language='English')
+                vietnamese=translate(message_content,language='Vietnamese')
+            elif main_language=='en':
+                english=message_content
+                japanese=translate(message_content,language='Japanese')
+                vietnamese=translate(message_content,language='Vietnamese')
+            else:
+                vietnamese=message_content
+                japanese=translate(message_content,language='Japanese')
+                english=translate(message_content,language='English')
             # Tạo tin nhắn mới và gán nó vào thread vừa tạo
             first_message = GroupMessage.objects.create(
                 sender=request.user,
                 message_content=message_content,
+                japanese=japanese,
+                english=english,
+                vietnamese=vietnamese,
                 thread=thread  # Gán thread cho tin nhắn
             )
 
@@ -124,6 +141,7 @@ def chat_view(request, group_id):
         'group': group,
         'messages': messages,
         'user_id': request.user.id, 
+        'main_language': main_language
     })
 
 @login_required
@@ -132,14 +150,30 @@ def thread_view(request, thread_id):
     first_message = thread.first_message
     messages = GroupMessage.objects.filter(thread=thread).order_by('timestamp')
     group = thread.group
-
+    user_profile = UserProfile.objects.get(user=request.user)
+    main_language = user_profile.main_language
     if request.method == "POST":
         message_content = request.POST.get('message_content')
+        if main_language=='ja':
+            japanese=message_content
+            english=translate(message_content,language='English')
+            vietnamese=translate(message_content,language='Vietnamese')
+        elif main_language=='en':
+            english=message_content
+            japanese=translate(message_content,language='Japanese')
+            vietnamese=translate(message_content,language='Vietnamese')
+        else:
+            vietnamese=message_content
+            japanese=translate(message_content,language='Japanese')
+            english=translate(message_content,language='English')
         if message_content:
             GroupMessage.objects.create(
                 sender=request.user,
                 thread=thread,
-                message_content=message_content
+                message_content=message_content,
+                japanese=japanese,
+                english=english,
+                vietnamese=vietnamese
             )
             return redirect('thread', thread_id=thread_id)
 
@@ -148,5 +182,39 @@ def thread_view(request, thread_id):
         'first_message': first_message,
         'messages': messages,
         'group': group,
-        'user_id': request.user.id,
+        'main_language': main_language,
+        'user_id':request.user.id
     })
+
+@login_required
+@csrf_exempt
+def update_summary(request, thread_id):
+    if request.method == 'POST':
+        thread = get_object_or_404(GroupThread, id=thread_id)
+        messages = GroupMessage.objects.filter(thread=thread).order_by('timestamp')
+        all_texts = '. '.join(message.message_content for message in messages)
+        
+        user_profile = UserProfile.objects.get(user=request.user)
+        main_language = user_profile.main_language
+        if main_language=='ja':
+            language='Japanese'
+        elif main_language=='en':
+            language='English'
+        elif main_language=='vi':
+            language='Vietnamese'
+        summary = summarize_text(all_texts, language)
+        return JsonResponse({'summary': summary})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+@login_required
+def explanation(request, message_id):
+    message = get_object_or_404(GroupMessage, id=message_id)
+    paragraph = message.message_content
+    user_profile = UserProfile.objects.get(user=request.user)
+    if user_profile.main_language == 'en':
+        language = 'English'
+    elif user_profile.main_language == 'ja':
+        language = 'Japanese'
+    elif user_profile.main_language == 'vi':
+        language = 'Vietnamese'
+    explanation = word_explanation(paragraph, language)
+    return JsonResponse({'explanation': explanation})
