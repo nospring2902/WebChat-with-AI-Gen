@@ -32,6 +32,7 @@ def summarize_text(paragraph, language):
     Please make a summary of multiple people's conversation below in {language} language.
     The longest it can be is 5 sentences. 
     Make sure to include important informations about developing an app.
+    If there's not enough information, just answer it's not enough information in {language} language.
     Remember to provide the answer in {language}.
     
     This is the conversation: "{paragraph}"
